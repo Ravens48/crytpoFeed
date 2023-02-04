@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var cryptoModel = CryptoModel()
     var body: some View {
         ScrollView {
             Text("Live View")
@@ -20,8 +21,8 @@ struct ContentView: View {
                     .fontWeight(.semibold)
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing:20) {
-                        ForEach(0..<10) {_ in
-                            CryptoCard()
+                        ForEach(self.cryptoModel.topMovingCoins, id: \.self) { coin in
+                            CryptoCard(coin:coin)
                         }
                     }
                 }
@@ -35,14 +36,17 @@ struct ContentView: View {
                     Text("Price")
                         .foregroundColor(.gray)
                 }
-                ForEach(0..<10) { _ in
-                    CryptoRow()
+                ForEach(self.cryptoModel.coinList, id: \.self) { coin in
+                    CryptoRow(coin: coin)
                 }
                 Spacer()
             }
         }
         .padding()
         .edgesIgnoringSafeArea(.bottom)
+        .task {
+            await cryptoModel.fetchCryptos(fiat: nil)
+        }
     }
 }
 

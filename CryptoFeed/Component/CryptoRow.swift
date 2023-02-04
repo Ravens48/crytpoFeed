@@ -8,27 +8,24 @@
 import SwiftUI
 
 struct CryptoRow: View {
+    var coin:CoinModel
     var body: some View {
         HStack {
             Text("1")
                 .font(.caption)
                 .foregroundColor(.gray)
-            Image(systemName: "bitcoinsign.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 32, height: 32)
-                .foregroundColor(.orange)
+            ImageFromUrl(urlImage: coin.image)
             VStack(alignment: .leading) {
-                Text("Bitcoin")
-                Text("BTC")
+                Text(coin.name)
+                Text(coin.symbol)
 
                     .foregroundColor(.gray)
             }
             Spacer()
             VStack(alignment: .trailing) {
-                Text("$333344")
-                Text("-5,5%")
-                    
+                Text("$\(coin.currentPrice)")
+                Text("\(coin.priceChange24H ?? 0)")
+                    .foregroundColor(coin.priceChange24H ?? 0 > 0 ? .green : .red)
             }
             Image(systemName: "heart")
         }
@@ -37,8 +34,8 @@ struct CryptoRow: View {
     }
 }
 
-struct CryptoRow_Previews: PreviewProvider {
-    static var previews: some View {
-        CryptoRow()
-    }
-}
+//struct CryptoRow_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CryptoRow(coin: CoinModel)
+//    }
+//}

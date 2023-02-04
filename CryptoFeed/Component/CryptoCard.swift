@@ -8,25 +8,24 @@
 import SwiftUI
 
 struct CryptoCard: View {
+    let coin:CoinModel
     var body: some View {
         VStack(alignment:.leading){
-            Image(systemName: "bitcoinsign.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 60, height: 60)
-                .foregroundColor(.orange)
+
+            ImageFromUrl(urlImage: coin.image)
             HStack {
-                Text("BTC")
-                Text("$33")
+                Text(coin.symbol)
+                Text("\(coin.priceChangePercentage24H ?? 0.0)")
                     .font(.caption)
                     .foregroundColor(.gray)
             }
-            Text("-5,5%")
+            Text("\(coin.currentPrice)")
                 .font(.title2)
                 .foregroundColor(.green)
         }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 20)
+//        .padding(.horizontal, 40)
+//        .padding(.vertical, 20)
+        .frame(width: 140, height: 140)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color(.systemGray4), lineWidth: 2)
@@ -34,8 +33,8 @@ struct CryptoCard: View {
     }
 }
 
-struct CryptoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        CryptoCard()
-    }
-}
+//struct CryptoCard_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CryptoCard()
+//    }
+//}
