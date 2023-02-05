@@ -14,16 +14,17 @@ enum ProfilScreen {
 }
 
 struct ProfilView:View {
+    @ObservedObject var userManager = UserManager()
     @State var statusPage:ProfilScreen
     var body:some View {
         VStack {
             switch statusPage {
             case .createAccount:
-                CreateAccountView(status: $statusPage)
+                CreateAccountView(status: $statusPage, userManager: self.userManager)
             case .connection:
                 ConnectionView(status: $statusPage)
             case .connected:
-                ConnectionView(status: $statusPage)
+                ConnectedUser(userManager: self.userManager)
             }
         }
         .onAppear{self.statusPage = .createAccount}
@@ -35,6 +36,7 @@ struct CreateAccountView: View {
     @State var name:String = ""
     @State var password: String  = ""
     @Binding var status:ProfilScreen
+    @ObservedObject var userManager:UserManager
     var body: some View {
         VStack(alignment: .leading) {
             Text("Créer un compte")
@@ -43,10 +45,18 @@ struct CreateAccountView: View {
             Text("Créer un compte pour debloquer l'ensenble des fonctionnalités")
                 .font(.title3)
                 
-            TextFieldComponent(picto: "envelope.fill", placholder: "Email", inputValue: $email)
-            TextFieldComponent(picto: "envelope.fill", placholder: "Password", inputValue: $email)
+            TextFieldComponent(picto: "envelope.fill", placeholder: "Email", inputValue: $email)
+            TextFieldComponent(picto: "envelope.fill", placeholder: "Username", inputValue: $name)
             SecureFieldCompenent(password: $password)
-            Button("Créer un compte", action:{print("test")})
+            Button("Créer un compte", action: {
+                print("create account")
+                Task {
+                    await self.userManager.createAccount(email: email, password: password, username: name)
+                    if (userManager.user?.token) != nil {
+                        self.status = .connected
+                    }
+                }
+            })
             .foregroundColor(.white)
             .frame(minWidth: 0, maxWidth: .infinity)
             .padding(15)
@@ -85,7 +95,7 @@ struct ConnectionView: View {
             Text("Ce un compte pour debloquer l'ensenble des fonctionnalités")
                 .font(.title3)
                 
-            TextFieldComponent(picto: "envelope.fill", placholder: "Email", inputValue: $email)
+            TextFieldComponent(picto: "envelope.fill", placeholder: "Email", inputValue: $email)
             SecureFieldCompenent(password: $password)
             Button("Me connecter", action:{print("test")})
             .foregroundColor(.white)
@@ -113,10 +123,19 @@ struct ConnectionView: View {
 }
 
 
+struct ConnectedUser: View {
+    @ObservedObject var userManager:UserManager
+    var body: some View {
+        VStack {
+            Text(userManager.user?.username ?? "FAIL?")
+        }
+    }
+}
+
 
 struct TextFieldComponent:View {
     let picto:String
-    let placholder:String
+    let placeholder:String
     @Binding var inputValue:String
     var body: some View {
         HStack {
@@ -124,7 +143,7 @@ struct TextFieldComponent:View {
                 .resizable()
                 .frame(width: 20, height: 20)
                 .padding(.horizontal, 10)
-            TextField("Password", text: $inputValue)
+            TextField(self.placeholder, text: $inputValue)
                 .onChange(of: inputValue) { text in
                     print("passe")
                 }
@@ -146,7 +165,7 @@ struct SecureFieldCompenent:View {
                 .resizable()
                 .frame(width: 20, height: 25)
                 .padding(.horizontal, 10)
-            TextField("Email", text: $password)
+            TextField("Password", text: $password)
                 .onChange(of: password) { text in
                     print("passe")
                 }
