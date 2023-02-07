@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CryptoRow: View {
     var coin:CoinModel
+    @EnvironmentObject var userManager:UserManager
     var body: some View {
         HStack {
             Text("1")
@@ -27,7 +28,9 @@ struct CryptoRow: View {
                 Text("\(coin.priceChange24H ?? 0)")
                     .foregroundColor(coin.priceChange24H ?? 0 > 0 ? .green : .red)
             }
-            Image(systemName: "heart")
+            if userManager.user?.id != nil {
+                Image(systemName: "heart")
+            }
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)

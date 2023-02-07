@@ -14,20 +14,30 @@ enum ProfilScreen {
 }
 
 struct ProfilView:View {
-    @ObservedObject var userManager = UserManager()
+    @EnvironmentObject var userManager:UserManager
     @State var statusPage:ProfilScreen
     var body:some View {
         VStack {
             switch statusPage {
             case .createAccount:
-                CreateAccountView(status: $statusPage, userManager: self.userManager)
+                CreateAccountView(status: $statusPage)
+                    .environmentObject(userManager)
             case .connection:
                 ConnectionView(status: $statusPage)
+                    .environmentObject(userManager)
             case .connected:
-                ConnectedUser(userManager: self.userManager)
+                ConnectedUser()
+                    .environmentObject(userManager)
+
             }
         }
-        .onAppear{self.statusPage = .createAccount}
+        .onAppear{
+            if userManager.user?.id != nil {
+                self.statusPage = .connected
+            } else {
+                self.statusPage = .createAccount
+            }            
+        }
     }
 }
 
@@ -36,7 +46,7 @@ struct CreateAccountView: View {
     @State var name:String = ""
     @State var password: String  = ""
     @Binding var status:ProfilScreen
-    @ObservedObject var userManager:UserManager
+    @EnvironmentObject var userManager:UserManager
     var body: some View {
         VStack(alignment: .leading) {
             Text("Créer un compte")
@@ -87,6 +97,8 @@ struct ConnectionView: View {
     @State var email:String = ""
     @State var password: String  = ""
     @Binding var status:ProfilScreen
+    @EnvironmentObject var userManager:UserManager
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Me connecter")
@@ -97,7 +109,17 @@ struct ConnectionView: View {
                 
             TextFieldComponent(picto: "envelope.fill", placeholder: "Email", inputValue: $email)
             SecureFieldCompenent(password: $password)
-            Button("Me connecter", action:{print("test")})
+            Button("Me connecter",
+                   action:{
+                print("test")
+                Task {
+                    await self.userManager.connectAccount(email: email, password: password)
+                    if (userManager.user?.token) != nil {
+                        self.status = .connected
+                    }
+                }
+                
+            })
             .foregroundColor(.white)
             .frame(minWidth: 0, maxWidth: .infinity)
             .padding(15)
@@ -124,7 +146,7 @@ struct ConnectionView: View {
 
 
 struct ConnectedUser: View {
-    @ObservedObject var userManager:UserManager
+    @EnvironmentObject var userManager:UserManager
     var body: some View {
         VStack {
             Text(userManager.user?.username ?? "FAIL?")

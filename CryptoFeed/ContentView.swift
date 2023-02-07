@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var cryptoModel = CryptoModel()
+    @StateObject private var userManager = UserManager()
     var body: some View {
         TabView {
             ScrollView {
@@ -17,6 +18,11 @@ struct ContentView: View {
                     .fontWeight(.semibold)
                     .padding(10)
                 VStack(alignment: .leading) {
+                    if (userManager.user?.username) != nil {
+                        Text("Hello, \(userManager.user?.username ?? "")")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                    }
                     Text("Top movers")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -39,17 +45,20 @@ struct ContentView: View {
                     }
                     ForEach(self.cryptoModel.coinList, id: \.self) { coin in
                         CryptoRow(coin: coin)
+                            .environmentObject(userManager)
                     }
                     Spacer()
                 }
             }
             .padding()
             .edgesIgnoringSafeArea(.bottom)
+            .environmentObject(userManager)
             .tabItem {
                 Image(systemName: "house")
                 Text("Home")
             }
             ProfilView(statusPage: .createAccount)
+                .environmentObject(userManager)
                 .tabItem {
                     Image(systemName: "house")
                     Text("Profil")
