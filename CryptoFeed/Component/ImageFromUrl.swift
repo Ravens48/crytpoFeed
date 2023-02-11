@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ImageFromUrl: View {
     let urlImage:String
+    let width: Int?
+    let height: Int?
     var body: some View {
         AsyncImage(url: URL(string: urlImage), content: { phase in
             switch phase {
@@ -17,7 +19,7 @@ struct ImageFromUrl: View {
             case .success(let image):
                 image.resizable()
                     .scaledToFit()
-                    .frame(width: 32, height: 32)
+                    .frame(width: CGFloat(width ?? 32), height: CGFloat(height ?? 32))
             case .failure:
                 Image(systemName: "photo")
             @unknown default:

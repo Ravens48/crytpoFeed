@@ -12,55 +12,24 @@ struct ContentView: View {
     @StateObject private var userManager = UserManager()
     var body: some View {
         TabView {
-            ScrollView {
-                Text("Live View")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .padding(10)
-                VStack(alignment: .leading) {
-                    if (userManager.user?.username) != nil {
-                        Text("Hello, \(userManager.user?.username ?? "")")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                    }
-                    Text("Top movers")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing:20) {
-                            ForEach(self.cryptoModel.topMovingCoins, id: \.self) { coin in
-                                CryptoCard(coin:coin)
-                            }
-                        }
-                    }
-                    Text("Coins")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    HStack {
-                        Text("Coin")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text("Price")
-                            .foregroundColor(.gray)
-                    }
-                    ForEach(self.cryptoModel.coinList, id: \.self) { coin in
-                        CryptoRow(coin: coin)
-                            .environmentObject(userManager)
-                    }
-                    Spacer()
-                }
-            }
-            .padding()
-            .edgesIgnoringSafeArea(.bottom)
-            .environmentObject(userManager)
+            CryptoLiveView(cryptoModel: self.cryptoModel)
+                .environmentObject(self.userManager)
             .tabItem {
                 Image(systemName: "house")
                 Text("Home")
             }
-            ProfilView(statusPage: .createAccount)
-                .environmentObject(userManager)
+            if (self.userManager.user?.id != nil ) {
+                FavoritesView()
+                    .environmentObject(self.userManager)
+                    .tabItem {
+                        Image(systemName: "heart")
+                        Text("Favoris")
+                    }
+            }
+            ProfilView(statusPage: .connection)
+                .environmentObject(self.userManager)
                 .tabItem {
-                    Image(systemName: "house")
+                    Image(systemName: "person")
                     Text("Profil")
                 }
         }

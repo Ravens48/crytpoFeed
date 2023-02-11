@@ -11,6 +11,7 @@ class CryptoModel:ObservableObject {
  
     @Published var coinList:[CoinModel] = []
     @Published var topMovingCoins:[CoinModel] = []
+    @Published var favCoinList:[CoinModel] = []
     
     func fetchCryptos(fiat:String?) async {
         guard let url = URL(string: "http://localhost:3000/api/crypto/usd/40") else {
@@ -30,6 +31,26 @@ class CryptoModel:ObservableObject {
             print("error fecthing data \(error)")
         }
     }
+    
+    func fetchFavoriteCryptos(userId:String, token:String,fiat:String?) async {
+        guard let url = URL(string: "http://localhost:3000/api/cryptos/favs/\(userId)") else {
+            return
+        }
+        var request = URLRequest(url:url)
+        request.allHTTPHeaderFields = ["x-access-token": token]
+        request.httpMethod = "GET"
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let coins = try? JSONDecoder().decode([CoinModel].self, from: data) {
+                DispatchQueue.main.async {
+                    self.favCoinList = coins
+                }
+            } else {
+                print("debug failed")
+            }
+        } catch {
+            print("error fecthing data \(error)")
+        }    }
     
     func setupTopMovingCoins() {
         let top = self.coinList.sorted(by: {$0.priceChangePercentage24H ?? 0 > $1.priceChangePercentage24H ?? 0})

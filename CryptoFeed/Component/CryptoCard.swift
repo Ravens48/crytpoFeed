@@ -12,7 +12,7 @@ struct CryptoCard: View {
     var body: some View {
         VStack(alignment:.leading){
 
-            ImageFromUrl(urlImage: coin.image)
+            ImageFromUrl(urlImage: coin.image, width: nil, height: nil)
             HStack {
                 Text(coin.symbol)
                 Text("\(coin.priceChangePercentage24H ?? 0.0)")

@@ -35,7 +35,7 @@ struct ProfilView:View {
             if userManager.user?.id != nil {
                 self.statusPage = .connected
             } else {
-                self.statusPage = .createAccount
+                self.statusPage = statusPage
             }            
         }
     }
