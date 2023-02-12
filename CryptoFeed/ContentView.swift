@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var cryptoModel = CryptoModel()
-    @StateObject private var userManager = UserManager()
+    @ObservedObject private var userManager = UserManager()
     var body: some View {
         TabView {
             CryptoLiveView(cryptoModel: self.cryptoModel)
@@ -34,7 +34,13 @@ struct ContentView: View {
                 }
         }
         .task {
+            let userDefaults = UserDefaults.standard
+            if userDefaults.value(forKey: "userId") != nil {
+                await userManager.getUser()
+            }
+            
             await cryptoModel.fetchCryptos(fiat: nil)
+            
         }
     }
 }

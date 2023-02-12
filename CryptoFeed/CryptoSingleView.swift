@@ -92,7 +92,8 @@ struct CryptoSingleView: View {
             }
         }
         .padding()
-        .edgesIgnoringSafeArea([ .bottom, .trailing, .leading])
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        .ignoresSafeArea()
         .task {
             if let user = self.userManager.user  {
                 self.statusFav = user.cryptosFav!.contains(self.coin.symbol)

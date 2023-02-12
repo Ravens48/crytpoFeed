@@ -29,7 +29,13 @@ struct CryptoLiveView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing:20) {
                             ForEach(self.cryptoModel.topMovingCoins, id: \.self) { coin in
-                                CryptoCard(coin:coin)
+                                NavigationLink(destination: CryptoSingleView(coin: coin)
+                                    .toolbar(.hidden, for: .tabBar)
+                                    .environmentObject(self.userManager)
+                                ) {
+                                    CryptoCard(coin:coin)
+                                        .accentColor(.primary)
+                                }
                             }
                         }
                     }
@@ -49,7 +55,7 @@ struct CryptoLiveView: View {
                             .environmentObject(self.userManager)
                         ) {
                             CryptoRow(coin: coin)
-                                .accentColor(Color.black)
+                                .accentColor(.primary)
                                 .environmentObject(userManager)
                         }
                         

@@ -12,9 +12,11 @@ class CryptoModel:ObservableObject {
     @Published var coinList:[CoinModel] = []
     @Published var topMovingCoins:[CoinModel] = []
     @Published var favCoinList:[CoinModel] = []
+    let api_url = ApiPlistManager().api_url
+
     
     func fetchCryptos(fiat:String?) async {
-        guard let url = URL(string: "http://localhost:3000/api/crypto/usd/40") else {
+        guard let url = URL(string: "\(self.api_url)api/crypto/usd/100") else {
             return
         }
         do {
@@ -33,7 +35,7 @@ class CryptoModel:ObservableObject {
     }
     
     func fetchFavoriteCryptos(userId:String, token:String,fiat:String?) async {
-        guard let url = URL(string: "http://localhost:3000/api/cryptos/favs/\(userId)") else {
+        guard let url = URL(string: "\(self.api_url)api/cryptos/favs/\(userId)") else {
             return
         }
         var request = URLRequest(url:url)

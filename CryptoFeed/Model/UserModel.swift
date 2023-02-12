@@ -48,11 +48,31 @@ struct ErrorResponse: Decodable {
 class UserManager: ObservableObject {
     // environement object ?
     @Published var user:UserModel? = nil
+    let api_url = ApiPlistManager().api_url
     
+    func getUser() async {
+        let userDefaults = UserDefaults.standard
+        let userId = userDefaults.string(forKey: "userId")
+        guard let url = URL(string: "\(self.api_url)api/user/\(userId!)") else {
+            return
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let user = try? JSONDecoder().decode(UserModel.self, from: data) {
+                DispatchQueue.main.async {
+                    self.user = user
+                }
+            } else {
+                print("debug failed")
+            }
+        } catch {
+            print("error fecthing data \(error)")
+        }
+    }
     
     func createAccount(email:String, password:String, username:String) async {
         let user = MyJsonUser(email: email, username: username, password: password)
-        guard let url = URL(string: "http://localhost:3000/api/auth/signup") else {
+        guard let url = URL(string: "\(self.api_url)api/auth/signup") else {
             return
         }
         var request = URLRequest(url: url)
@@ -65,6 +85,9 @@ class UserManager: ObservableObject {
             if let userData = try? JSONDecoder().decode(UserModel.self, from: data) {
                 DispatchQueue.main.async {
                     self.user = userData
+                    let userDefaults = UserDefaults.standard
+                    userDefaults.setValue(self.user?.id, forKey: "userId")
+                    userDefaults.synchronize()
                 }
             }
         } catch {
@@ -74,7 +97,7 @@ class UserManager: ObservableObject {
     
     func connectAccount(email:String, password:String) async {
         let user = ConnectUser(email: email, password: password)
-        guard let url = URL(string: "http://localhost:3000/api/auth/signin") else {
+        guard let url = URL(string: "\(self.api_url)api/auth/signin") else {
             return
         }
         var request = URLRequest(url: url)
@@ -87,6 +110,9 @@ class UserManager: ObservableObject {
             if let userData = try? JSONDecoder().decode(UserModel.self, from: data) {
                 DispatchQueue.main.async {
                     self.user = userData
+                    let userDefaults = UserDefaults.standard
+                    userDefaults.setValue(self.user?.id, forKey: "userId")
+                    userDefaults.synchronize()
                 }
             } else {
                 print(response)
@@ -101,7 +127,7 @@ class UserManager: ObservableObject {
     
     func updateCryptosFav(userId:String ,cryptoId:String) async {
         let crypto = CryptoUpdate(cryptoId: cryptoId)
-        guard let url = URL(string: "http://localhost:3000/api/user/crypto/\(userId)") else {
+        guard let url = URL(string: "\(self.api_url)api/user/crypto/\(userId)") else {
             return
         }
         var request = URLRequest(url: url)
