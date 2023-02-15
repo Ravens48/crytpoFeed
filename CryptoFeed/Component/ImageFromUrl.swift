@@ -32,9 +32,3 @@ struct ImageFromUrl: View {
         })
     }
 }
-
-//struct AsyncImage_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AsyncImage()
-//    }
-//}

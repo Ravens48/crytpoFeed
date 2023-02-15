@@ -46,27 +46,32 @@ struct ErrorResponse: Decodable {
 
 
 class UserManager: ObservableObject {
-    // environement object ?
     @Published var user:UserModel? = nil
     let api_url = ApiPlistManager().api_url
     
     func getUser() async {
         let userDefaults = UserDefaults.standard
         let userId = userDefaults.string(forKey: "userId")
-        guard let url = URL(string: "\(self.api_url)api/user/\(userId!)") else {
-            return
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            if let user = try? JSONDecoder().decode(UserModel.self, from: data) {
-                DispatchQueue.main.async {
-                    self.user = user
-                }
-            } else {
-                print("debug failed")
+        if let userId = userId {
+            guard let url = URL(string: "\(self.api_url)api/user/\(userId)") else {
+                return
             }
-        } catch {
-            print("error fecthing data \(error)")
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let user = try? JSONDecoder().decode(UserModel.self, from: data) {
+                    DispatchQueue.main.async {
+                        self.user = user
+                    }
+                } else {
+                    print("debug failed")
+                }
+            } catch {
+                print("error fecthing data \(error)")
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.user = nil
+            }
         }
     }
     
@@ -149,6 +154,15 @@ class UserManager: ObservableObject {
             }
         } catch {
             print("error fetching data\(error)")
+        }
+    }
+    
+    func disconnectuser() {
+        DispatchQueue.main.async {
+            let userDefaults = UserDefaults.standard
+            userDefaults.setValue(nil, forKey: "userId")
+            self.user = nil
+            userDefaults.synchronize()
         }
     }
 }

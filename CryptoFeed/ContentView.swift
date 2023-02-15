@@ -34,11 +34,7 @@ struct ContentView: View {
                 }
         }
         .task {
-            let userDefaults = UserDefaults.standard
-            if userDefaults.value(forKey: "userId") != nil {
-                await userManager.getUser()
-            }
-            
+            await userManager.getUser()
             await cryptoModel.fetchCryptos(fiat: nil)
             
         }

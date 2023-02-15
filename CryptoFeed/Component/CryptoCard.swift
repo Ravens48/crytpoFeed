@@ -15,7 +15,7 @@ struct CryptoCard: View {
             ImageFromUrl(urlImage: coin.image, width: nil, height: nil)
             HStack {
                 Text(coin.symbol)
-                Text("\(coin.priceChangePercentage24H ?? 0.0)")
+                Text("\((round((coin.priceChangePercentage24H ?? 0.0) * 100) / 100) )")
                     .font(.caption)
                     .foregroundColor(.gray)
             }
@@ -23,8 +23,6 @@ struct CryptoCard: View {
                 .font(.title2)
                 .foregroundColor(.green)
         }
-//        .padding(.horizontal, 40)
-//        .padding(.vertical, 20)
         .frame(width: 140, height: 140)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -32,9 +30,3 @@ struct CryptoCard: View {
         )
     }
 }
-
-//struct CryptoCard_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CryptoCard()
-//    }
-//}
