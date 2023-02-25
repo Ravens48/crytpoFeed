@@ -18,6 +18,7 @@ struct TextFieldComponent:View {
                 .frame(width: 20, height: 20)
                 .padding(.horizontal, 10)
             TextField(self.placeholder, text: $inputValue)
+                .autocapitalization(.none)
                 .onChange(of: inputValue) { text in
                 }
                 .multilineTextAlignment(.leading)

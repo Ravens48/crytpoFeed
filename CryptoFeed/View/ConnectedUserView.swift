@@ -26,6 +26,7 @@ struct ConnectedUserView: View {
             .padding(20)
             VStack(alignment: .leading) {
                 Text("Email:")
+                    .autocapitalization(.none)
                     .font(.title2)
                     .fontWeight(.light)
                 Text(userManager.user?.email ?? "test@gmail.com")
@@ -51,10 +52,3 @@ struct ConnectedUserView: View {
         .padding(.horizontal, 20)
     }
 }
-
-
-//struct ConnectedUserView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ConnectedUserView()
-//    }
-//}

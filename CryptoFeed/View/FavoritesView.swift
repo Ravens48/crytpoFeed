@@ -45,7 +45,6 @@ struct CryptoRowsList:View {
             }
             ForEach(coinList, id: \.self) { coin in
                 CryptoRow(coin: coin)
-//                    .environmentObject(userManager)
             }
         }
     }

@@ -68,9 +68,3 @@ struct CryptoLiveView: View {
         .edgesIgnoringSafeArea(.bottom)
     }
 }
-
-//struct CryptoLiveView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CryptoLiveView(cryptoModel: CryptoModel())
-//    }
-//}

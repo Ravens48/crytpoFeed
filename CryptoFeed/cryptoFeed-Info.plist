@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>API_URL</key>
-	<string>http://192.168.1.13:3000/</string>
+	<string>http://localhost:3000/</string>
 </dict>
 </plist>
